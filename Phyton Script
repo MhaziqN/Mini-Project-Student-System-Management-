@@ -1,0 +1,307 @@
+#STUDENT MANAGEMENT SYSTEM
+
+import pypyodbc as odbc
+
+#Sql Connection
+DRIVER_NAME = 'SQL SERVER'
+SERVER_NAME = 'HAZIQ-PC\SQLEXPRESS01'
+DATABASE_NAME = 'IRAcedemy'
+
+#SQL  Database information
+connection_string =f"""
+  DRIVER={{{DRIVER_NAME}}};
+  SERVER={SERVER_NAME};
+  DATABASE={DATABASE_NAME};
+  Trust_connection=yes;
+  
+"""
+conn =odbc.connect(connection_string)  # connect the connection Phyton
+print(conn)
+
+cursor=conn.cursor()
+#1.adding Student
+
+def addStudent():
+ id=input('Student ID:') 
+ name=input('Student Name:')
+ DateofBirth=input('Date of Birth :')
+ Age=input('Student Age:')
+ AddS=input('Address Street :')
+ AddState=input('Address State :')
+ AddCount=input('Address Country : ')
+ Addpost=input('Address PostalCode :')
+ Phone=input('Phone Number :')
+ Email=input('Email : ')
+                    # The sql command for add data in sql
+ cursor.execute(""" INSERT INTO dbo.Student_Personal VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) """,(id, name, DateofBirth, Age,  AddS, AddState,  AddCount, Addpost, Phone, Email))
+ conn.commit()
+ print('Student information successfully added\n')
+
+#2.addMarks student
+
+def addmark():
+
+ id = input('Student ID: ')
+ Malay =int(input('Malay Mark: '))
+ English = int(input('English Mark: '))
+ Science = int(input('Science Mark: '))
+ Maths = int(input('Math Mark: '))
+ Arts = int(input('Art Mark: '))
+ History = int(input ('History Mark: '))
+ Geography = int(input('Geography Mark:'))
+
+ total = Malay+English+Science+Maths+Arts+History+Geography
+ Average = total/7
+
+ if Average >=90:
+  Result = 'PASS'
+  Grade = 'A+'
+ elif Average >=80:
+  Result = 'PASS'
+  Grade = 'A'
+ elif Average >= 70:
+  Result = 'PASS'
+  Grade = 'B+'
+ elif Average >=60:
+  Result = 'PASS'
+  Grade = 'B'
+ elif Average >=40:
+  Result = 'PASS'
+  Grade = 'C'
+ elif Average <=39:
+  Result = 'PASS'
+  Grade = 'G'
+
+ #print('Average : ' + str(Average))
+ #print('Total :' + str(total))
+ #print( 'Result :' + str(Result) )
+ #print('Grade :'+ str(Grade))
+                     # The sql command for add data in sql
+ cursor.execute(""" INSERT INTO dbo.Student_Marks VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?) """,(id, Malay, English , Science ,Maths, Arts,  History , Geography, total , Average,Result,Grade))
+ conn.commit()
+ print('Student Mark successfully added\n')
+
+
+#3.update student
+def UpdateStudent():
+ id=input('Enter Student ID: ')
+
+
+ print('\n        Menu          ')
+ print('.........................')
+ print('.1 -     Name           .')
+ print('.2 - Date of Birth(DOB) .')
+ print('.3 -     Age            .')
+ print('.4 - Address Street     .')
+ print('.5 - Address State      .')
+ print('.6 - Address Country    .')
+ print('.7 - Postal Code        .')
+ print('.8 - Phone Number       .')
+ print('.9 -    Email           .')
+ print('.........................')
+ print('\n*Choose Information did you like to update')
+
+ option=input('What did you like to update ?')
+ if option == '1':
+  update = input('Enter New Name : ')
+  cursor.execute("UPDATE dbo.Student_Personal SET Std_Name = '%s' WHERE Std_ID = %s "%(update, id))  #'s' fro references if string && 'd' for int
+ elif option == '2':                                                                                  # The sql command for UPDATE data in sql
+  update = input('Date of Birth(DOB):')
+  cursor.execute("UPDATE dbo.Student_Personal SET Std_DOB = '%s' WHERE Std_ID = %s"%(update, id))
+ elif option == '3':
+  update = input('Enter New Age :')
+  cursor.execute("UPDATE dbo.Student_Personal SET Std_Age = '%s' WHERE Std_ID = %s "
+                % (update, id))
+ elif option == '4':
+  update = input('Enter New Address Street:')
+  cursor.execute("UPDATE dbo.Student_Personal SET Std_Street = '%s' WHERE Std_ID = %s "
+                % (update, id))
+ elif option == '5':
+  update = input('Enter New Address State: ')
+  cursor.execute("UPDATE dbo.Student_Personal SET Std_State = '%s' WHERE Std_ID = %s "
+                % (update, id))
+ elif option == '6':
+  update = input('Enter New Address Country: ')
+  cursor.execute("UPDATE dbo.Student_Personal SET Std_Countryname= '%s' WHERE Std_ID = %s "
+                % (update, id))
+ elif option == '7':
+  update = input('Enter New Postal Code: ')
+  cursor.execute("UPDATE dbo.Student_Personal SET Std_PostalCode = '%s' WHERE Std_ID = %s "
+                % (update, id))
+ elif option == '8':
+  update = input('Enter New Phone Number: ')
+  cursor.execute("UPDATE dbo.Student_Personal SET Std_Phoneno = '%s' WHERE Std_ID = %s "
+                % (update, id))
+ elif option == '9':
+  update = input('Enter New Email:')
+  cursor.execute("UPDATE dbo.Student_Personal SET Std_Email = '%s' WHERE Std_ID = %s "
+                % (update, id))
+ else:
+   print('Invalid Input!!!')
+   quit()
+
+ conn.commit() # The sql command to execute command
+ print('Student Personal Successfully Update\n')
+
+
+
+#4.Delete Student
+
+def DelStudent():
+ id=input('Enter id to Delete Record : ')
+
+ cursor.execute("DELETE from dbo.Student_Personal  WHERE Std_ID = %s " # The sql command for del data in sql
+                % (id))
+ conn.commit()
+ print('Student Personal Successfully Delete\n')
+
+
+
+#5.SearchStudent
+def SearchStudent():
+ #name =input ('insert student name : ' )  #input the student name
+ id=int(input('Insert Student ID :'))
+
+ cursor.execute("SELECT * FROM dbo.Student_Personal WHERE Std_ID = %d " % (id)) # The sql command for search data in sql
+ #cursor.execute("SELECT * FROM dbo.Student_Personal WHERE Std_Name=%s"%(name))
+ row= cursor.fetchone() #to display  out the  database data in a table in a single data
+
+ if row == None:
+  print("Student are not in list")
+ else:
+  print('   Student Information   ')
+  print('..........................')
+  print('Student ID:'+ row[0])
+  print('Student Name : ' + row[1] )
+  print('Date of Birth (DOB) :'+ row[2])
+  print('Age :'+ str(row[3]))
+  print ('Address : ' + row[4]+', '+ row[5] +', '+ row[6]+', '+str(row[7]))
+  print('N.Phone :'+ row[8])
+  print('Email : '+ row[9])
+
+ conn.commit()
+
+
+#6.Display All Student
+
+def DisplayAStudent():
+
+ cursor.execute('''
+ SELECT * FROM Student_Personal LEFT JOIN Student_Marks ON Student_Personal.Std_ID = Student_Marks.Std_ID
+ ''') #to display all  out the  database data in a table in a
+ row = cursor.fetchall()
+
+ for row in row :
+  print('_________________________________________')
+  print('\n Student List Information ')
+  print('..........................')
+  print('Student ID:' + row[0])
+  print('Student Name : ' + row[1])
+  print('Date of Birth (DOB) :' + row[2])
+  print('Age :' + str(row[3]))
+  print('Address : ' + row[4] + ', ' + row[5] + ', ' + row[6] + ', ' + str(row[7]))
+  print('N.Phone :' + row[8])
+  print('Email : ' + row[9])
+  print('\n     Student Mark   ')
+  print('................... ')
+  print('Malay Mark : '+str(row[11])+' %')
+  print('English Mark : ' + str(row[12]) + ' %')
+  print('Science Mark : ' + str(row[13]) + ' %')
+  print('Maths Mark : ' + str(row[14]) + ' %')
+  print('ART Mark : '+str(row[15])+' %')
+  print('History Mark : ' + str(row[16]) + ' %')
+  print('Geography Mark : ' + str(row[17]) + ' %')
+  print('Total Mark : ' + str(row[18]) )
+  print('Average Mark : ' + str(row[19]))
+  print('Result : ' + str(row[20]) )
+  print('Grade : ' + row[21])
+  print('_________________________________________')
+
+ conn.commit()
+
+process = 0
+while process == 0:
+ print('         STUDENT MANAGEMENT SYSTEM        ')
+ print('__________________________________________')
+ print('          Welcome to the System           ')
+ print('\n                 MENU                     ')
+ print('-------------------------------------------')
+ print('.1 -     ADD STUDENT INFORMATION           ')
+ print('.2 -         ADD STUDENT MARK              ')
+ print('.3 -   UPDATE STUDENT INFORMATION          ')
+ print('.4 -   DELETE STUDENT INFORMATION          ')
+ print('.5 -   SEARCH STUDENT INFORMaTION          ')
+ print('.6 -   DISPLAYS STUDENT INFORMATION        ')
+
+ print('--------------------------------------------')
+ print('*Choose option (Number) did you like to do')
+
+ menu=input('What is your option : ')
+ if menu == '1':
+  addStudent();
+  proceed = input('\nDid you want to proceed ? (0=Yes 1=No')
+  if proceed == '0':
+   continue
+  else:
+   break
+
+ elif  menu == '2':
+  addmark();
+  proceed = input('\nDid you want to proceed ? (0=Yes 1=No')
+  if proceed == '0':
+   continue
+  else:
+   break
+
+ elif  menu == '3':
+  UpdateStudent();
+  proceed = input('\nDid you want to proceed ? (0=Yes 1=No')
+  if proceed == '0':
+   continue
+  else:
+   break
+
+ elif  menu == '4':
+  DelStudent();
+  proceed = input('\nDid you want to proceed ? (0=Yes 1=No')
+  if proceed == '0':
+   continue
+  else:
+   break
+
+ elif  menu == '5':
+  SearchStudent();
+  proceed = input('\nDid you want to proceed ? (0=Yes 1=No')
+  if proceed == '0':
+   continue
+  else:
+   break
+
+ elif menu == '6':
+  DisplayAStudent()
+  proceed = input('\nDid you want to proceed ? (0=Yes 1=No')
+  if proceed == '0':
+   continue
+  else:
+   break
+
+ else:
+   print('Invalid input !!')
+   print('Please insert number in the menu List')
+   continue
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
